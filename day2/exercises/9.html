@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>9.html</title>
+	</head>
+	<body>
+		<h1>9.html</h1>
+
+		<p id="hello"></p>
+
+		<div>
+			<input type="text" id="userinput" value="Send Message">
+			<input type="button" id="submit" value="Send">
+		</div>
+		<div id="messages"></div>
+
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io.connect("/");
+
+			socket.on("connect", function(){
+				console.log("connected");
+			});
+			socket.on("disconnect", function(){
+				console.log("disconnected");
+			});
+			socket.on("hello", function(num){
+				document.getElementById("hello").innerHTML = "Hello World: " + num;
+			});
+
+			socket.on("messages", function(msg){
+				document.getElementById("messages").innerHTML += msg + "</br>";
+			});
+
+			socket.on("otheruserdisconnect", function(msg){
+				document.getElementById("messages").innerHTML += msg + "</br>";
+
+			});
+
+			document.getElementById("submit").addEventListener("click", function(evt){
+
+				var msg = document.getElementById("userinput").value;
+
+				if (msg) {
+
+					socket.emit("userinput", msg);
+
+					document.getElementById("messages").innerHTML += msg + "</br>";
+					document.getElementById("userinput").value = "";
+				}
+			});
+		</script>
+	</body>
+</html>
